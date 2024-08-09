@@ -1,52 +1,45 @@
 package com.as_pasa.t1_htsk1.services;
 
-import com.as_pasa.t1_htsk1.entities.Order;
-import com.as_pasa.t1_htsk1.entities.User;
+
+import com.as_pasa.t1_htsk1.annotations.IgnoreLogging;
+import com.as_pasa.t1_htsk1.exceptions.ApplicationException;
+import com.as_pasa.t1_htsk1.models.User;
 import com.as_pasa.t1_htsk1.repositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
+
     private final UserRepository userRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserService(UserRepository repo){
+        this.userRepository=repo;
     }
-
-    public User createUser(User user) {
+    public User persistUser(User user){
         return userRepository.save(user);
     }
-
-    public User findUserById(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User Not Found"));
-
+    public User findById(Long id)  {
+        return userRepository.findById(id).orElseThrow(()->new ApplicationException("User Not Found"));
     }
-
-    public User updateUser(Long id, User details) {
-        User user = findUserById(id);
-        user.setName(details.getName());
-        user.setEmail(details.getEmail());
-        user.setOrders(details.getOrdersList());
+    public User modifyUser(Long id, User details){
+        User user = findById(id);
+        user.setState(details);
         return userRepository.save(user);
     }
-
-    public void deleteUser(Long id) {
-        User user = findUserById(id);
-        userRepository.delete(user);
+    public void deleteUser(Long id){
+        userRepository.deleteById(id);
+    }
+    public List<User> listUsers(){
+        return userRepository.findAll();
     }
 
-    public User addOrder(Long uId, Order order) {
-        User user = findUserById(uId);
-        List<Order> orders = user.getOrdersList();
-        orders.add(order);
-        user.setOrders(orders);
-        return userRepository.save(user);
-    }
-    public User createEmtpyUser(String name, String email){
-        return createUser(new User(name,email));
+    @IgnoreLogging
+    public User initUser(String name, String email){
+        return new User(name,email,new ArrayList<>());
     }
 }

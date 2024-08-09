@@ -1,28 +1,40 @@
-package com.as_pasa.t1_htsk1.entities;
-
+package com.as_pasa.t1_htsk1.models;
 
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name="users")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String email;
-    @OneToMany(targetEntity = Order.class)
+    @OneToMany(mappedBy = "user")
     private List<Order> orders;
+    protected User(){
 
-    public Long getId() {
-        return id;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public String toString() {
+        return String.format("USER(%s, %s)",name,email);
     }
+
+    public User(String name, String email, List<Order> orders) {
+        this.name = name;
+        this.email = email;
+        this.orders = orders;
+    }
+
+    public void setState(User state){
+        this.setName(state.getName());
+        this.setEmail(state.getEmail());
+        this.setOrders(state.getOrders());
+    }
+
 
     public String getName() {
         return name;
@@ -40,7 +52,7 @@ public class User {
         this.email = email;
     }
 
-    public List<Order> getOrdersList() {
+    public List<Order> getOrders() {
         return orders;
     }
 
@@ -48,14 +60,7 @@ public class User {
         this.orders = orders;
     }
 
-    public User(String name, String email) {
-        this.name = name;
-        this.email = email;
-        this.orders=new ArrayList<>();
-    }
-
-
-    protected User() {
-
+    public Long getId() {
+        return id;
     }
 }

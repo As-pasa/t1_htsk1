@@ -1,0 +1,8 @@
+{
+  "properties": [
+    {
+      "name": "aspect.enabled",
+      "type": "java.lang.String",
+      "description": "define which of two different logging aspect implementations will be used (around, multiple)"
+  }
+] }
